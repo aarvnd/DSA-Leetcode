@@ -76,14 +76,15 @@
 ## Solution Explanation
 
 ### Intuition
-The key insight is that since the maximum element in `nums` is small (up to 200), the running GCD of any subsequence is strictly bounded by 200. This allows us to use dynamic programming to track the number of ways to form every possible pair of GCDs `(g1, g2)` by deciding whether each element goes into the first subsequence, the second subsequence, or neither.
+Since the maximum value in the array is very small (at most 200), the possible greatest common divisors (GCDs) of any subsequence are also strictly bounded by 200. This small state space allows us to use dynamic programming to simultaneously track the running GCDs of two disjoint subsequences as we iterate through the array, rather than generating all possible subsequences.
 
 ### Approach
-- Find the maximum value $M$ in `nums` and precompute a 2D GCD table up to $M$ to allow $O(1)$ transitions during the DP phase.
-- Initialize a 2D DP table `dp[g1][g2]` with `dp[0][0] = 1`, where the index 0 denotes an empty subsequence.
-- Iterate through each element `x` in `nums` and use a `nextDp` table to compute the new states. For every existing state `(g1, g2)`, propagate its combinations to three new states: `(g1, g2)` (exclude `x` from both), `(gcd(g1, x), g2)` (append `x` to the first subsequence), and `(g1, gcd(g2, x))` (append `x` to the second subsequence).
-- After processing all elements, sum the counts in `dp[g][g]` for all $g \ge 1$ (which ensures both subsequences are non-empty) and return the result modulo $10^9 + 7$.
+- Find the maximum value $M$ in the array to define the bounds of the DP state.
+- Precompute a 2D GCD table for all pairs of numbers up to $M$ to avoid redundant calculations and speed up the inner DP loops.
+- Initialize a 2D DP array `dp[g1][g2]` representing the number of ways to form two disjoint subsequences with running GCDs `g1` and `g2`. Set `dp[0][0] = 1` to represent the initial empty subsequences (using 0 as a placeholder since `gcd(0, x) = x`).
+- For each number `x` in the array, iterate through all existing states in `dp` and transition to a `nextDp` array by considering three choices: skip `x`, add `x` to the first subsequence (updating `g1` to `gcd(g1, x)`), or add `x` to the second subsequence (updating `g2` to `gcd(g2, x)`).
+- After processing all elements, sum the values of `dp[g][g]` for all $1 \le g \le M$ (starting from 1 ensures we only count non-empty subsequences) and return the result modulo $10^9 + 7$.
 
 ### Complexity
-- **Time:** O(N * M^2) — where N is the length of `nums` and M is the maximum value in `nums`, as we process N elements and update an M x M DP table at each step.
-- **Space:** O(M^2) — for storing the M x M precomputed GCD table and the two M x M DP arrays (`dp` and `nextDp`).
+- **Time:** O(N * M^2) — We iterate through $N$ elements, and for each element, we process an $M \times M$ DP grid, where $M$ is the maximum value in the array.
+- **Space:** O(M^2) — We only need to store the current and next $M \times M$ DP states, along with the $M \times M$ precomputed GCD table.
