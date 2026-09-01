@@ -1,5 +1,7 @@
 class Solution {
     public int countSpecialIntegers(int[] nums) {
+        
+        
         Set<Integer> seen = new HashSet<> ();
         Set<Integer> notSpecial =new HashSet<>();
         int n = nums.length;
