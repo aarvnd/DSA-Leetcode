@@ -1,26 +1,20 @@
-import java.util.ArrayList;
-import java.util.List;
-
 class Solution {
+
     public List<String> generateParenthesis(int n) {
-        List<String> result = new ArrayList<>();
-        backtrack(result, new char[2 * n], 0, 0, 0, n);
-        return result;
+        List<String> v1 = new ArrayList<>();
+        fun("", v1, n, 0, 0);
+        return v1;
     }
 
-    private void backtrack(List<String> result, char[] current, int index, int open, int close, int n) {
-        if (index == current.length) {
-            result.add(new String(current));
+    void fun(String tmp, List<String> v1, int n, int a, int b) {
+        if (a > n || b > n || b > a) return;
+
+        if (tmp.length() == 2 * n) {
+            v1.add(tmp);
             return;
         }
 
-        if (open < n) {
-            current[index] = '(';
-            backtrack(result, current, index + 1, open + 1, close, n);
-        }
-        if (close < open) {
-            current[index] = ')';
-            backtrack(result, current, index + 1, open, close + 1, n);
-        }
+        fun(tmp + "(", v1, n, a + 1, b);
+        fun(tmp + ")", v1, n, a, b + 1);
     }
 }
